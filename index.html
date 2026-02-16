@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Mathematics of Flooring Estimates | Documentation Guide</title>
+
+  <meta name="description" content="A documentation-style technical guide explaining the geometry and mathematics behind flooring estimates: area measurement, waste factors, labor cost logic, and tile material formulas with a built-in calculator tool." />
+  <meta name="robots" content="index,follow" />
+  <meta name="author" content="M Zeeshan Haider" />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- Optional: replace with your GitHub Pages URL -->
+  <link rel="canonical" href="https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO/the-mathematics-of-flooring-estimates.html" />
+
+  <meta property="og:title" content="The Mathematics of Flooring Estimates" />
+  <meta property="og:description" content="A precise, humanized, documentation-style guide to measuring and pricing flooring, including waste math, labor rate logic, and tile formulas with a calculator tool." />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root{
+      --bg:#f4f6f8;
+      --paper:#ffffff;
+      --ink:#0b1220;
+      --muted:#52606d;
+      --line:#e6e9ee;
+      --codebg:#0b1220;
+      --codeink:#e6f0ff;
+      --accent:#2a6df4;
+      --accent2:#0ea5e9;
+      --shadow: 0 10px 25px rgba(11,18,32,.08);
+      --radius: 14px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.6;
+      text-rendering:optimizeLegibility;
+    }
+
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .skip{
+      position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
+    }
+    .skip:focus{
+      left:16px; top:14px; width:auto; height:auto;
+      background:var(--paper); padding:10px 12px; border-radius:10px;
+      border:1px solid var(--line); box-shadow:var(--shadow);
+      z-index:9999;
+    }
+
+    header{
+      background:linear-gradient(135deg, #0b1220, #111b33 60%, #0a2248);
+      color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .topbar{
+      max-width:1180px;
+      margin:0 auto;
+      padding:22px 18px;
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:260px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+      line-height:1.25;
+    }
+    .brand p{
+      margin:0;
+      color:rgba(255,255,255,.78);
+      font-size:13.5px;
+      max-width:62ch;
+    }
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+      margin-top:4px;
+    }
+    .pill{
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12.5px;
+      color:rgba(255,255,255,.88);
+      white-space:nowrap;
+    }
+    .pill strong{color:#fff; font-weight:600}
+
+    .wrap{
+      max-width:1180px;
+      margin:0 auto;
+      padding:22px 18px 40px;
+      display:grid;
+      grid-template-columns: 290px 1fr;
+      gap:18px;
+    }
+
+    nav{
+      position:sticky;
+      top:14px;
+      align-self:start;
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    nav .toc-title{
+      font-weight:700;
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin:2px 0 10px;
+    }
+    .toc{
+      list-style:none;
+      padding:0; margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .toc a{
+      display:block;
+      padding:9px 10px;
+      border-radius:10px;
+      border:1px solid transparent;
+      color:var(--ink);
+      font-size:14px;
+    }
+    .toc a:hover{
+      background:#f7f9fc;
+      border-color:var(--line);
+      text-decoration:none;
+    }
+    .toc small{
+      color:var(--muted);
+      display:block;
+      margin-top:2px;
+      font-size:12.5px;
+      line-height:1.35;
+    }
+
+    main{
+      min-width:0;
+    }
+
+    .paper{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+
+    .badge-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:4px 0 10px;
+    }
+    .badge{
+      border:1px solid var(--line);
+      background:#fbfdff;
+      color:var(--muted);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12.5px;
+    }
+
+    h2{
+      margin:22px 0 10px;
+      font-size:20px;
+      line-height:1.3;
+    }
+    h3{
+      margin:16px 0 8px;
+      font-size:16px;
+      line-height:1.35;
+    }
+    p{margin:10px 0}
+    .muted{color:var(--muted)}
+    .hr{
+      height:1px; background:var(--line);
+      margin:18px 0;
+    }
+
+    .callout{
+      border:1px solid var(--line);
+      background:#fbfdff;
+      border-left:4px solid var(--accent2);
+      padding:12px 12px 12px 14px;
+      border-radius:12px;
+      margin:14px 0;
+    }
+    .callout .title{
+      font-weight:700;
+      margin:0 0 6px;
+    }
+
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      background: rgba(11,18,32,.06);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: .95em;
+    }
+    pre{
+      background:var(--codebg);
+      color:var(--codeink);
+      padding:14px;
+      border-radius:12px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      margin:12px 0;
+    }
+    pre code{
+      background:transparent;
+      padding:0;
+      color:inherit;
+      font-size:13.5px;
+      line-height:1.55;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .grid3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+    }
+
+    .tool{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fbfdff;
+      padding:14px;
+      margin:14px 0 10px;
+    }
+    .tool h3{
+      margin:0 0 10px;
+      font-size:16px;
+    }
+    .tool p{margin:6px 0 12px}
+    label{
+      display:block;
+      font-size:12.5px;
+      color:var(--muted);
+      margin:0 0 6px;
+    }
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:10px 10px;
+      font-size:14px;
+      background:#fff;
+      color:var(--ink);
+      outline:none;
+    }
+    textarea{min-height:84px; resize:vertical}
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(42,109,244,.55);
+      box-shadow: 0 0 0 4px rgba(42,109,244,.12);
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border:1px solid rgba(42,109,244,.35);
+      background:linear-gradient(180deg, rgba(42,109,244,.10), rgba(42,109,244,.04));
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+    }
+    .btn:hover{
+      background:linear-gradient(180deg, rgba(42,109,244,.14), rgba(42,109,244,.06));
+    }
+    .btn.primary{
+      border-color: rgba(42,109,244,.60);
+      background:linear-gradient(180deg, rgba(42,109,244,.26), rgba(42,109,244,.10));
+    }
+    .btn.danger{
+      border-color: rgba(220,38,38,.35);
+      background:linear-gradient(180deg, rgba(220,38,38,.10), rgba(220,38,38,.04));
+    }
+    .btn.danger:hover{
+      background:linear-gradient(180deg, rgba(220,38,38,.14), rgba(220,38,38,.06));
+    }
+    .results{
+      margin-top:12px;
+      background:#ffffff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+    }
+    .results .k{
+      color:var(--muted);
+      font-size:12.5px;
+      margin:0 0 4px;
+    }
+    .results .v{
+      font-weight:800;
+      font-size:18px;
+      margin:0 0 8px;
+    }
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:13.5px;
+    }
+    .table th, .table td{
+      text-align:left;
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+    }
+    .table th{
+      background:#f8fafc;
+      color:var(--muted);
+      font-weight:700;
+      font-size:12.5px;
+      letter-spacing:.02em;
+    }
+    .note{
+      font-size:12.5px;
+      color:var(--muted);
+      margin-top:10px;
+    }
+
+    footer{
+      margin-top:18px;
+      background:#0b1220;
+      color:rgba(255,255,255,.86);
+    }
+    .foot{
+      max-width:1180px;
+      margin:0 auto;
+      padding:18px 18px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .foot a{color:#cfe2ff}
+    .foot small{color:rgba(255,255,255,.70)}
+    .foot .cols{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+    }
+    .foot .col{
+      min-width:220px;
+    }
+    .foot .col h4{
+      margin:0 0 6px;
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.72);
+    }
+    .foot .col p, .foot .col small{margin:0}
+    .foot .col p{font-size:13.5px; line-height:1.55}
+
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr}
+      nav{position:relative; top:0}
+      .topbar{flex-direction:column; align-items:flex-start}
+      .meta{justify-content:flex-start}
+    }
+    @media (max-width: 720px){
+      .grid2, .grid3{grid-template-columns:1fr}
+      .paper{padding:16px}
+      nav{padding:12px}
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {
+        "@type":"TechArticle",
+        "headline":"The Mathematics of Flooring Estimates",
+        "description":"A documentation-style technical guide explaining the geometry and mathematics behind flooring estimates: area measurement, waste factors, labor cost logic, and tile material formulas with a built-in calculator tool.",
+        "author":{"@type":"Person","name":"M Zeeshan Haider"},
+        "dateModified":"2026-02-16",
+        "inLanguage":"en",
+        "about":[
+          {"@type":"Thing","name":"Flooring estimation"},
+          {"@type":"Thing","name":"Construction measurement"},
+          {"@type":"Thing","name":"Tile materials calculation"}
+        ],
+        "mainEntityOfPage":{
+          "@type":"WebPage",
+          "@id":"https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO/the-mathematics-of-flooring-estimates.html"
+        }
+      },
+      {
+        "@type":"SoftwareApplication",
+        "name":"Flooring Estimate Calculator",
+        "applicationCategory":"CalculatorApplication",
+        "operatingSystem":"Any",
+        "description":"Client-side calculator for net area, waste-adjusted area, material and labor totals, plus tile count, grout, and thinset estimates."
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <h1>The Mathematics of Flooring Estimates</h1>
+        <p>Documentation-style analysis of measuring and pricing flooring using clear geometry, controlled waste math, and transparent labor and tile material formulas.</p>
+      </div>
+      <div class="meta" aria-label="Document metadata">
+        <span class="pill"><strong>Type:</strong> Technical Documentation</span>
+        <span class="pill"><strong>Version:</strong> 1.0</span>
+        <span class="pill"><strong>Last updated:</strong> 16 Feb 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <nav aria-label="Table of contents">
+      <div class="toc-title">Contents</div>
+      <ul class="toc">
+        <li><a href="#overview">Overview <small>Inputs, outputs, and the estimation pipeline</small></a></li>
+        <li><a href="#geometry">Geometry of Measurement <small>Rectangles, composite rooms, irregular fields</small></a></li>
+        <li><a href="#waste">Waste Factor Mathematics <small>5% vs 15% as controlled risk</small></a></li>
+        <li><a href="#labor">Labor Cost Logic <small>Rate models, adders, and variability</small></a></li>
+        <li><a href="#tile">Tile Estimation Formulas <small>Tile count, grout volume, thinset quantity</small></a></li>
+        <li><a href="#tool">Built-in Calculator Tool <small>Interactive estimator for quick checks</small></a></li>
+        <li><a href="#method">Methodology and Assumptions <small>E-E-A-T signals and documentation notes</small></a></li>
+      </ul>
+    </nav>
+
+    <main id="content" class="paper">
+      <article>
+        <div class="badge-row" aria-label="Key topics">
+          <span class="badge">Area geometry</span>
+          <span class="badge">Waste multiplier</span>
+          <span class="badge">Labor cost model</span>
+          <span class="badge">Tile materials</span>
+          <span class="badge">Calculator tool</span>
+        </div>
+
+        <section id="overview">
+          <h2>1) Overview: The Estimation Pipeline</h2>
+          <p>
+            A flooring estimate is a controlled translation from <em>shape</em> to <em>quantity</em> to <em>price</em>.
+            The work looks simple when reduced to a single number, but accurate estimates rely on a consistent sequence of logic:
+            measure the net floor area, apply a waste factor as a risk buffer, convert coverage into purchasable units, then add labor and fixed line items.
+          </p>
+
+          <div class="callout" role="note" aria-label="Key formula">
+            <p class="title">Core estimate structure</p>
+            <p class="muted">
+              Most estimates can be expressed as:
+              <code>Total = (MaterialUnitCost × RequiredArea) + (LaborModel(Area, Complexity)) + FixedFees</code>
+            </p>
+          </div>
+
+          <p>
+            The purpose of this document is to make each term above explicit and testable. If two estimators disagree, the disagreement usually comes from
+            one of four places: geometry (how the room was decomposed), waste (how risk was quantified), labor (which variable costs were included),
+            or tile consumables (how grout and thinset were modeled).
+            When you want real-world pricing context, you can cross-check assumptions with a dependable <a href="https://flooringcostpro.com/" rel="noopener" target="_blank">Flooring Cost Pro</a> flooring data source that aggregates market ranges and estimation inputs in one place.
+          </p>
+        </section>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <section id="geometry">
+          <h2>2) The Geometry of Floor Measurement</h2>
+          <p>
+            Flooring is sold by area, so the first problem is geometric: compute net surface area of the field that will receive material.
+            The most robust approach is to treat every room as either (a) a simple rectangle, (b) a sum of rectangles, or (c) an irregular polygon.
+            The estimator’s goal is not to show off advanced math, but to use the simplest method that reliably matches the real footprint.
+          </p>
+
+          <h3>2.1 Rectangles: the baseline case</h3>
+          <p>
+            Rectangular rooms are the cleanest input because both measurement and error analysis are straightforward.
+            If a room has length <code>L</code> and width <code>W</code>, the net area is:
+            <code>Area = L × W</code>.
+            A small improvement is to measure each dimension twice (opposite walls) and use the larger value when walls are out of square.
+            This does not inflate the estimate randomly; it reduces the probability that the material arrives short due to hidden taper.
+          </p>
+
+          <pre><code>Rectangle example:
+L = 18.5 ft
+W = 12.0 ft
+NetArea = L × W = 222.0 sq ft</code></pre>
+
+          <h3>2.2 Composite rooms: L-shapes and corridor blends</h3>
+          <p>
+            Most homes are not perfect rectangles. The practical estimator decomposes a complex room into a set of rectangles whose union matches the footprint.
+            This is the same idea as covering an L-shaped room with two rectangles:
+            <code>AreaTotal = (L1 × W1) + (L2 × W2) + ...</code>.
+            Composite measurement has two advantages. First, it uses tape-friendly distances.
+            Second, each sub-rectangle can carry its own notes, such as a doorway notch, fireplace bump-out, or an island clearance that changes tile layout.
+          </p>
+
+          <div class="callout" role="note">
+            <p class="title">Decomposition rule</p>
+            <p class="muted">
+              Prefer fewer rectangles with clear boundaries. Each added piece introduces another measurement pair and therefore another chance for transcription error.
+            </p>
+          </div>
+
+          <h3>2.3 Irregular shapes: polygon logic and the shoelace formula</h3>
+          <p>
+            Truly irregular fields show up in bay windows, angled walls, sunrooms, and custom additions.
+            You can still compute area reliably by treating the boundary as a polygon with ordered vertices.
+            If points are <code>(x1,y1), (x2,y2), ... (xn,yn)</code>, the polygon area can be computed by the shoelace method:
+            <code>Area = 0.5 × | Σ(xi·yi+1) − Σ(yi·xi+1) |</code>, where the index wraps so <code>(xn+1,yn+1) = (x1,y1)</code>.
+            This method is exact for straight-line boundaries and is easy to implement in a calculator tool.
+          </p>
+
+          <pre><code>Shoelace area (concept):
+Given ordered vertices (x1,y1)...(xn,yn)
+Sum1 = x1*y2 + x2*y3 + ... + xn*y1
+Sum2 = y1*x2 + y2*x3 + ... + yn*x1
+Area = 0.5 * abs(Sum1 - Sum2)</code></pre>
+
+          <p>
+            In practice, you do not need a perfect coordinate system. A simple local axis works:
+            pick a corner as (0,0), measure perpendicular offsets to each vertex, and list the points in order.
+            If the shape is partly curved, you approximate it by short straight segments, accepting a small modeling error that is later protected by waste.
+          </p>
+        </section>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <section id="waste">
+          <h2>3) Waste Factor Mathematics (5% vs 15%)</h2>
+          <p>
+            Waste is not an admission of sloppy work. It is the formal recognition that flooring is purchased in discrete units and installed by cutting around obstacles.
+            The correct mental model is that waste is a multiplier applied to net area to achieve a target probability of not running short.
+            Mathematically:
+            <code>RequiredArea = NetArea × (1 + WasteRate)</code>.
+            In other words, a 10% waste factor is a safety margin equal to one tenth of the measured field.
+          </p>
+
+          <h3>3.1 Why 5% sometimes works</h3>
+          <p>
+            A 5% factor often fits straightforward installations where cuts are limited and pattern constraints are mild.
+            Consider a large rectangular room with planks installed parallel to the long dimension, minimal doorways, and no diagonal layout.
+            The cutting loss is dominated by perimeter trimming. Because most offcuts can be reused along the opposite wall, the effective waste stays low.
+            In these conditions, a 5% buffer acts like a small variance cushion rather than a structural correction.
+          </p>
+
+          <pre><code>Waste factor example:
+NetArea = 222 sq ft
+At 5% waste: RequiredArea = 222 × 1.05 = 233.1 sq ft
+At 15% waste: RequiredArea = 222 × 1.15 = 255.3 sq ft</code></pre>
+
+          <h3>3.2 Why 15% becomes rational</h3>
+          <p>
+            A 15% factor becomes mathematically defensible when layout constraints increase offcut irrecoverability.
+            The classic drivers are diagonal tile, herringbone patterns, short runs broken by doorways, and rooms with many inside corners.
+            Each constraint reduces the fraction of offcuts that can be reused because dimensions do not match future needs.
+            If you view every cut as producing a random remainder length, then more constraints increase the expected remainder that cannot be repurposed.
+          </p>
+
+          <div class="callout" role="note">
+            <p class="title">Waste as risk control</p>
+            <p class="muted">
+              Waste does two jobs: it covers geometric approximation error and it covers discrete purchase rounding.
+              If material comes in boxes that cover <code>BoxCoverage</code>, then:
+              <code>Boxes = ceil(RequiredArea / BoxCoverage)</code>.
+            </p>
+          </div>
+
+          <p>
+            The box rounding effect is easy to miss. Even if the pure mathematical required area is exact, procurement is not continuous.
+            If each carton covers 22.5 sq ft and you need 233.1 sq ft, the purchase must round up to 11 cartons (247.5 sq ft),
+            which already behaves like an implicit waste margin. The cleanest workflow is to apply waste first, then convert to cartons,
+            then record the effective purchased waste so the estimate remains explainable.
+          </p>
+        </section>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <section id="labor">
+          <h2>4) Labor Cost Logic (Why Rates Fluctuate)</h2>
+          <p>
+            Labor is variable because it is not purely proportional to area. The field area influences time, but so do demolition, subfloor preparation,
+            layout complexity, and business constraints like minimum charges and schedule windows.
+            A simple per-square-foot quote is often a shorthand for a multi-variable model.
+            When you analyze the logic behind quoting, it is helpful to treat labor as:
+            <code>LaborTotal = (BaseRate × Area) + Adders + FixedFees</code>.
+          </p>
+
+          <h3>4.1 Base rate: the area-driven component</h3>
+          <p>
+            The base rate compresses an expected workflow into a single number: layout, cuts, setting, and cleanup per unit area.
+            It embeds crew productivity, tool loadout, and regional wage conditions.
+            This is why the same floor area can price differently across markets.
+            If you want a practical view of what inputs commonly change rates, see <a href="https://flooringcostpro.com/flooring-labor-cost-per-sq-ft/" rel="noopener" target="_blank">installation rate parameters</a> and how labor cost variables are typically structured as adders rather than random markups.
+          </p>
+
+          <h3>4.2 Adders: complexity as explicit variables</h3>
+          <p>
+            Adders exist to keep the estimate honest. If you pretend every job is a clean rectangle, you underprice complex rooms and overprice simple ones.
+            Adders are often either per-unit (per doorway, per stair tread) or per-area (extra per sq ft for leveling or moisture barrier).
+            A transparent model might look like this:
+          </p>
+
+          <pre><code>Labor model (example):
+LaborTotal =
+  (BaseRatePerSqFt × Area)
++ (LevelingRatePerSqFt × AreaNeedingLevel)
++ (DemolitionRatePerSqFt × DemoArea)
++ (TransitionsCount × TransitionFee)
++ MinimumTripOrSetupFee</code></pre>
+
+          <h3>4.3 Why labor fluctuates even when the math is stable</h3>
+          <p>
+            Even with a solid model, quoted rates fluctuate because the real world changes the inputs.
+            Crew availability affects pricing because schedules carry opportunity cost. Tight timelines compress labor into less flexible windows.
+            Material type changes skill demand. Tile setting, for example, carries layout and curing constraints that change the production rate.
+            Subfloor condition changes risk. If the surface is unknown until demo day, labor includes a contingency for remediation.
+            Finally, job size affects overhead allocation. Small jobs often carry a minimum because mobilization and cleanup do not scale down linearly.
+          </p>
+
+          <div class="callout" role="note">
+            <p class="title">Key point</p>
+            <p class="muted">
+              The variability is not a failure of math. It is math reflecting different inputs. When labor is modeled as variables, fluctuation becomes explainable.
+            </p>
+          </div>
+        </section>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <section id="tile">
+          <h2>5) Tile Estimation Formulas (Grout + Thinset + Tile)</h2>
+          <p>
+            Tile estimation adds a second layer of math because you are pricing both the visible finished surface and the hidden consumables that create a stable bond.
+            You estimate tile count (discrete pieces), thinset (coverage-based adhesive), and grout (joint volume converted to weight).
+            The clean workflow is to compute required area first, then derive each material from the geometry and specified installation parameters.
+            For reference implementations and patterns, see <a href="https://flooringcostpro.com/tile-flooring-calculator/" rel="noopener" target="_blank">tile estimation algorithms</a> and compare the tile cost calculator logic against the formulas below.
+          </p>
+
+          <h3>5.1 Tile count from area</h3>
+          <p>
+            If a tile has dimensions <code>TL</code> by <code>TW</code> (in feet), its face area is:
+            <code>TileArea = TL × TW</code>.
+            If <code>RequiredArea</code> is the waste-adjusted area from Section 3, then:
+            <code>TileCount = ceil(RequiredArea / TileArea)</code>.
+            This assumes a simple grid. For patterns, you apply a higher waste rate rather than attempt to model each cut piece in advance.
+          </p>
+
+          <pre><code>Tile count example:
+RequiredArea = 255.3 sq ft
+Tile size = 12 in × 24 in = 1 ft × 2 ft = 2 sq ft
+TileCount = ceil(255.3 / 2) = 128 tiles</code></pre>
+
+          <h3>5.2 Thinset from coverage</h3>
+          <p>
+            Thinset is usually purchased by bag. The conversion relies on a coverage value that depends on trowel notch size, substrate flatness,
+            and tile back-buttering practices. For estimation math, treat the bag coverage as an input <code>CoveragePerBag</code> (sq ft per bag):
+            <code>Bags = ceil(RequiredArea / CoveragePerBag × (1 + Overbuild))</code>.
+            An overbuild factor is a small buffer for variations in ridges and waste in mixing. In documentation terms, it is the same risk-control idea as waste.
+          </p>
+
+          <h3>5.3 Grout as joint volume</h3>
+          <p>
+            Grout quantity is fundamentally volumetric. Each joint is a long, narrow prism with cross-section approximately equal to joint width times joint depth.
+            A practical estimator can approximate grout volume using tile perimeter and the reality that interior joints are shared between neighboring tiles.
+            In a large field, grout length per tile is close to <code>(TileLength + TileWidth)</code>, not <code>2 × (TileLength + TileWidth)</code>, because edges are shared.
+            That leads to:
+            <code>GroutVolumePerTile = (TileLength + TileWidth) × JointWidth × JointDepth</code>.
+            Total grout volume is:
+            <code>TotalGroutVolume = GroutVolumePerTile × TileCount</code>.
+            Convert volume to weight using density:
+            <code>GroutWeight = TotalGroutVolume × Density</code>.
+          </p>
+
+          <div class="callout" role="note">
+            <p class="title">Units discipline</p>
+            <p class="muted">
+              Keep grout inputs in consistent units. If you use inches for tile and joints, compute cubic inches first, then convert to cubic feet:
+              <code>ft³ = in³ / 1728</code>. Multiply by <code>Density(lb/ft³)</code> to get pounds.
+            </p>
+          </div>
+
+          <p>
+            This joint-volume approach is transparent and adjustable. If a specification calls for deeper joints, or a tile is thicker, you change joint depth.
+            If a product’s density differs, you change density. In documentation, those are explicit parameters, not hidden assumptions.
+          </p>
+        </section>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <section id="tool">
+          <h2>6) Built-in Flooring Calculator Tool</h2>
+          <p class="muted">
+            This tool runs fully in the browser. It computes net area from rectangles or a polygon, applies a waste factor, then estimates material and labor totals.
+            Tile mode adds tile count plus grout and thinset estimates using the formulas documented above.
+          </p>
+
+          <div class="tool" aria-label="Flooring estimate calculator">
+            <h3>Flooring Estimate Calculator</h3>
+
+            <div class="grid2">
+              <div>
+                <label for="mode">Measurement method</label>
+                <select id="mode">
+                  <option value="rect">Rectangles (sum of rooms)</option>
+                  <option value="poly">Irregular polygon (shoelace)</option>
+                </select>
+              </div>
+              <div>
+                <label for="units">Units</label>
+                <select id="units">
+                  <option value="ft">Feet (area in sq ft)</option>
+                  <option value="m">Meters (area in sq m)</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="rectBlock" style="margin-top:12px">
+              <div class="row" style="justify-content:space-between">
+                <div>
+                  <p style="margin:0"><strong>Rectangles list</strong></p>
+                  <p class="muted" style="margin:2px 0 0; font-size:13px">
+                    Add each rectangle as length and width. Total net area is the sum of all rectangles.
+                  </p>
+                </div>
+                <div class="row">
+                  <button class="btn" type="button" id="addRectBtn">Add rectangle</button>
+                  <button class="btn danger" type="button" id="clearRectsBtn">Clear</button>
+                </div>
+              </div>
+
+              <table class="table" aria-label="Rectangles table" id="rectTable" style="margin-top:10px">
+                <thead>
+                  <tr>
+                    <th style="width:70px">#</th>
+                    <th>Length</th>
+                    <th>Width</th>
+                    <th style="width:110px">Remove</th>
+                  </tr>
+                </thead>
+                <tbody id="rectTbody"></tbody>
+              </table>
+
+              <p class="note">Formula: <code>NetArea = Σ(Li × Wi)</code></p>
+            </div>
+
+            <div id="polyBlock" style="margin-top:12px; display:none">
+              <p style="margin:0 0 6px"><strong>Polygon vertices</strong></p>
+              <p class="muted" style="margin:0 0 10px; font-size:13px">
+                Enter points as <code>x,y</code> pairs, one per line, in order around the room boundary. Example:
+                <code>0,0</code>, <code>18,0</code>, <code>18,6</code>, <code>10,10</code>, <code>0,10</code>.
+              </p>
+              <label for="polyPoints">Points list</label>
+              <textarea id="polyPoints" spellcheck="false">0,0
+18,0
+18,12
+0,12</textarea>
+              <p class="note">Formula: <code>Area = 0.5 × abs(Σ(xi·yi+1) − Σ(yi·xi+1))</code></p>
+            </div>
+
+            <div class="hr" aria-hidden="true"></div>
+
+            <div class="grid3">
+              <div>
+                <label for="waste">Waste factor (%)</label>
+                <input id="waste" type="number" min="0" step="0.5" value="10" />
+              </div>
+              <div>
+                <label for="materialCost">Material cost (per sq unit)</label>
+                <input id="materialCost" type="number" min="0" step="0.01" value="3.75" />
+              </div>
+              <div>
+                <label for="laborRate">Labor rate (per sq unit)</label>
+                <input id="laborRate" type="number" min="0" step="0.01" value="2.25" />
+              </div>
+            </div>
+
+            <div class="grid3" style="margin-top:12px">
+              <div>
+                <label for="fixedFees">Fixed fees (demo, transitions, travel)</label>
+                <input id="fixedFees" type="number" min="0" step="1" value="250" />
+              </div>
+              <div>
+                <label for="laborAdders">Labor adders (per sq unit)</label>
+                <input id="laborAdders" type="number" min="0" step="0.01" value="0.35" />
+              </div>
+              <div>
+                <label for="taxRate">Tax rate (%)</label>
+                <input id="taxRate" type="number" min="0" step="0.1" value="0" />
+              </div>
+            </div>
+
+            <div class="hr" aria-hidden="true"></div>
+
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <p style="margin:0"><strong>Tile mode (optional)</strong></p>
+                <p class="muted" style="margin:2px 0 0; font-size:13px">
+                  Enable to estimate tile count, grout weight, and thinset bags. Uses waste-adjusted area.
+                </p>
+              </div>
+              <div class="row">
+                <label style="margin:0; color:var(--muted); font-size:13px">
+                  <input type="checkbox" id="tileMode" style="width:auto; margin-right:8px; transform: translateY(1px);" />
+                  Enable tile mode
+                </label>
+              </div>
+            </div>
+
+            <div id="tileBlock" style="margin-top:10px; display:none">
+              <div class="grid3">
+                <div>
+                  <label for="tileL">Tile length (in)</label>
+                  <input id="tileL" type="number" min="1" step="0.25" value="24" />
+                </div>
+                <div>
+                  <label for="tileW">Tile width (in)</label>
+                  <input id="tileW" type="number" min="1" step="0.25" value="12" />
+                </div>
+                <div>
+                  <label for="tilePrice">Tile price (per tile)</label>
+                  <input id="tilePrice" type="number" min="0" step="0.01" value="2.10" />
+                </div>
+              </div>
+
+              <div class="grid3" style="margin-top:12px">
+                <div>
+                  <label for="jointWidth">Grout joint width (in)</label>
+                  <input id="jointWidth" type="number" min="0" step="0.01" value="0.125" />
+                </div>
+                <div>
+                  <label for="jointDepth">Grout joint depth (in)</label>
+                  <input id="jointDepth" type="number" min="0" step="0.01" value="0.25" />
+                </div>
+                <div>
+                  <label for="groutDensity">Grout density (lb/ft³)</label>
+                  <input id="groutDensity" type="number" min="1" step="1" value="100" />
+                </div>
+              </div>
+
+              <div class="grid3" style="margin-top:12px">
+                <div>
+                  <label for="thinsetCoverage">Thinset coverage (sq unit per bag)</label>
+                  <input id="thinsetCoverage" type="number" min="1" step="1" value="50" />
+                </div>
+                <div>
+                  <label for="thinsetOverbuild">Thinset overbuild (%)</label>
+                  <input id="thinsetOverbuild" type="number" min="0" step="0.5" value="10" />
+                </div>
+                <div>
+                  <label for="groutOverbuild">Grout overbuild (%)</label>
+                  <input id="groutOverbuild" type="number" min="0" step="0.5" value="8" />
+                </div>
+              </div>
+
+              <p class="note">
+                Formulas: <code>TileCount = ceil(RequiredArea / TileArea)</code>,
+                <code>ThinsetBags = ceil(RequiredArea / CoveragePerBag × (1 + Overbuild))</code>,
+                <code>GroutWeight(lb) = (TileCount × (L+W) × JointWidth × JointDepth / 1728) × Density</code>.
+              </p>
+            </div>
+
+            <div class="row" style="margin-top:12px">
+              <button class="btn primary" type="button" id="calcBtn">Calculate</button>
+              <button class="btn" type="button" id="resetBtn">Reset defaults</button>
+            </div>
+
+            <div class="results" id="results" aria-live="polite" style="display:none">
+              <div class="grid3">
+                <div>
+                  <p class="k">Net area</p>
+                  <p class="v" id="outNet">0</p>
+                  <p class="muted" style="margin:0; font-size:12.5px">From geometry</p>
+                </div>
+                <div>
+                  <p class="k">Required area (with waste)</p>
+                  <p class="v" id="outReq">0</p>
+                  <p class="muted" style="margin:0; font-size:12.5px">Waste-adjusted</p>
+                </div>
+                <div>
+                  <p class="k">Grand total</p>
+                  <p class="v" id="outTotal">$0.00</p>
+                  <p class="muted" style="margin:0; font-size:12.5px">With optional tax</p>
+                </div>
+              </div>
+
+              <table class="table" aria-label="Estimate breakdown" style="margin-top:10px">
+                <thead>
+                  <tr>
+                    <th>Line item</th>
+                    <th>Formula</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdownBody"></tbody>
+              </table>
+
+              <div id="tileResults" style="display:none; margin-top:10px">
+                <h3 style="margin:10px 0 6px">Tile materials output</h3>
+                <table class="table" aria-label="Tile breakdown">
+                  <thead>
+                    <tr>
+                      <th>Material</th>
+                      <th>Formula</th>
+                      <th>Estimate</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tileBody"></tbody>
+                </table>
+              </div>
+
+              <p class="note" id="unitNote"></p>
+            </div>
+
+            <p class="note">
+              Documentation note: This tool is an estimator, not a substitute for field verification. It reflects the same controlled multiplier logic documented in this guide.
+            </p>
+          </div>
+        </section>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <section id="method">
+          <h2>7) Methodology, E-E-A-T Notes, and Assumptions</h2>
+          <h3>7.1 Scope and intent</h3>
+          <p>
+            This document is written as technical documentation for a public repository and is focused on reproducible estimation logic.
+            The goal is clarity: each quantity is derived from explicit inputs, each multiplier is labeled, and each rounding step is visible.
+            This makes the estimate auditable, which is the core trust signal in construction analytics.
+          </p>
+
+          <h3>7.2 Assumptions declared</h3>
+          <p>
+            Estimates depend on declared assumptions. Here, waste is treated as an explicit percentage.
+            Labor is treated as a base rate plus adders plus fixed fees.
+            Tile consumables are treated as coverage (thinset) and volume converted to weight (grout).
+            Where manufacturer values vary (coverage, density), the calculator asks for the parameter rather than hiding it.
+          </p>
+
+          <h3>7.3 Sources and cross-checking</h3>
+          <p>
+            Market pricing inputs and typical estimation structures can be validated against reputable pricing references and estimator datasets.
+            For a practical cross-check of how inputs are commonly organized and explained, the linked pages above provide a consistent baseline for flooring and labor assumptions without turning the estimate into a black box.
+          </p>
+
+          <div class="callout" role="note">
+            <p class="title">Readable math is reliable math</p>
+            <p class="muted">
+              If an estimate cannot show how <code>Area</code>, <code>Waste</code>, <code>Labor</code>, and <code>Consumables</code> were computed, it cannot be debugged when reality disagrees.
+            </p>
+          </div>
+        </section>
+      </article>
+    </main>
+  </div>
+
+  <footer>
+    <div class="foot">
+      <div class="cols">
+        <div class="col">
+          <h4>Document</h4>
+          <p><strong>The Mathematics of Flooring Estimates</strong></p>
+          <small>Version 1.0 | Updated 16 Feb 2026</small>
+        </div>
+        <div class="col">
+          <h4>Author</h4>
+          <p>M Zeeshan Haider</p>
+          <small>Technical construction analysis and documentation</small>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="col">
+          <h4>License</h4>
+          <p><small>Use and adapt with attribution in your repository.</small></p>
+        </div>
+        <div class="col">
+          <h4>References</h4>
+          <p style="margin:0; font-size:13.5px; line-height:1.7">
+            <a href="https://flooringcostpro.com/" rel="noopener" target="_blank">Flooring Cost Pro</a><br />
+            <a href="https://flooringcostpro.com/flooring-labor-cost-per-sq-ft/" rel="noopener" target="_blank">installation rate parameters</a><br />
+            <a href="https://flooringcostpro.com/tile-flooring-calculator/" rel="noopener" target="_blank">tile estimation algorithms</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const $ = (id) => document.getElementById(id);
+
+      const mode = $("mode");
+      const units = $("units");
+      const rectBlock = $("rectBlock");
+      const polyBlock = $("polyBlock");
+      const rectTbody = $("rectTbody");
+
+      const addRectBtn = $("addRectBtn");
+      const clearRectsBtn = $("clearRectsBtn");
+
+      const tileMode = $("tileMode");
+      const tileBlock = $("tileBlock");
+
+      const calcBtn = $("calcBtn");
+      const resetBtn = $("resetBtn");
+
+      const results = $("results");
+      const outNet = $("outNet");
+      const outReq = $("outReq");
+      const outTotal = $("outTotal");
+      const breakdownBody = $("breakdownBody");
+      const tileResults = $("tileResults");
+      const tileBody = $("tileBody");
+      const unitNote = $("unitNote");
+
+      function fmt(n, decimals=2){
+        if (!isFinite(n)) return "0";
+        return Number(n).toLocaleString(undefined, {maximumFractionDigits:decimals, minimumFractionDigits:decimals});
+      }
+      function money(n){
+        if (!isFinite(n)) return "$0.00";
+        return "$" + Number(n).toLocaleString(undefined, {maximumFractionDigits:2, minimumFractionDigits:2});
+      }
+      function parseNum(v, fallback=0){
+        const x = Number(v);
+        return isFinite(x) ? x : fallback;
+      }
+
+      function unitLabel(){
+        return units.value === "m" ? "sq m" : "sq ft";
+      }
+
+      function addRectRow(L=12, W=10){
+        const idx = rectTbody.children.length + 1;
+        const tr = document.createElement("tr");
+
+        const tdIdx = document.createElement("td");
+        tdIdx.textContent = String(idx);
+
+        const tdL = document.createElement("td");
+        const inL = document.createElement("input");
+        inL.type = "number";
+        inL.min = "0";
+        inL.step = "0.01";
+        inL.value = String(L);
+        inL.setAttribute("aria-label", "Length");
+        tdL.appendChild(inL);
+
+        const tdW = document.createElement("td");
+        const inW = document.createElement("input");
+        inW.type = "number";
+        inW.min = "0";
+        inW.step = "0.01";
+        inW.value = String(W);
+        inW.setAttribute("aria-label", "Width");
+        tdW.appendChild(inW);
+
+        const tdRm = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn danger";
+        btn.textContent = "Remove";
+        btn.addEventListener("click", () => {
+          tr.remove();
+          reindexRects();
+        });
+        tdRm.appendChild(btn);
+
+        tr.appendChild(tdIdx);
+        tr.appendChild(tdL);
+        tr.appendChild(tdW);
+        tr.appendChild(tdRm);
+        rectTbody.appendChild(tr);
+      }
+
+      function reindexRects(){
+        [...rectTbody.querySelectorAll("tr")].forEach((tr, i) => {
+          const first = tr.querySelector("td");
+          if (first) first.textContent = String(i + 1);
+        });
+      }
+
+      function clearRects(){
+        rectTbody.innerHTML = "";
+        addRectRow(18.5, 12);
+        addRectRow(6, 10);
+      }
+
+      function setModeUI(){
+        const isRect = mode.value === "rect";
+        rectBlock.style.display = isRect ? "" : "none";
+        polyBlock.style.display = isRect ? "none" : "";
+      }
+
+      function setTileUI(){
+        tileBlock.style.display = tileMode.checked ? "" : "none";
+      }
+
+      function rectNetArea(){
+        let sum = 0;
+        const rows = [...rectTbody.querySelectorAll("tr")];
+        for (const tr of rows){
+          const inputs = tr.querySelectorAll("input");
+          const L = inputs[0] ? parseNum(inputs[0].value, 0) : 0;
+          const W = inputs[1] ? parseNum(inputs[1].value, 0) : 0;
+          sum += Math.max(0, L) * Math.max(0, W);
+        }
+        return sum;
+      }
+
+      function polyNetArea(){
+        const text = $("polyPoints").value.trim();
+        if (!text) return 0;
+
+        const lines = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+        const pts = [];
+        for (const line of lines){
+          const parts = line.split(",").map(s => s.trim());
+          if (parts.length !== 2) continue;
+          const x = parseNum(parts[0], NaN);
+          const y = parseNum(parts[1], NaN);
+          if (!isFinite(x) || !isFinite(y)) continue;
+          pts.push([x, y]);
+        }
+        if (pts.length < 3) return 0;
+
+        let sum1 = 0, sum2 = 0;
+        for (let i=0; i<pts.length; i++){
+          const [x1, y1] = pts[i];
+          const [x2, y2] = pts[(i+1) % pts.length];
+          sum1 += x1 * y2;
+          sum2 += y1 * x2;
+        }
+        return 0.5 * Math.abs(sum1 - sum2);
+      }
+
+      function calc(){
+        const wastePct = Math.max(0, parseNum($("waste").value, 0));
+        const materialCost = Math.max(0, parseNum($("materialCost").value, 0));
+        const laborRate = Math.max(0, parseNum($("laborRate").value, 0));
+        const fixedFees = Math.max(0, parseNum($("fixedFees").value, 0));
+        const laborAdders = Math.max(0, parseNum($("laborAdders").value, 0));
+        const taxRate = Math.max(0, parseNum($("taxRate").value, 0));
+
+        const net = mode.value === "rect" ? rectNetArea() : polyNetArea();
+        const req = net * (1 + wastePct/100);
+
+        const materialLine = req * materialCost;
+
+        const laborLine = req * (laborRate + laborAdders);
+
+        const subtotal = materialLine + laborLine + fixedFees;
+        const tax = subtotal * (taxRate/100);
+        const total = subtotal + tax;
+
+        outNet.textContent = fmt(net, 2) + " " + unitLabel();
+        outReq.textContent = fmt(req, 2) + " " + unitLabel();
+        outTotal.textContent = money(total);
+
+        breakdownBody.innerHTML = "";
+        const rows = [
+          ["Net Area", "From geometry", fmt(net,2) + " " + unitLabel()],
+          ["Waste Adjusted Area", "RequiredArea = NetArea × (1 + WasteRate)", fmt(req,2) + " " + unitLabel()],
+          ["Materials", "Material = RequiredArea × UnitCost", money(materialLine)],
+          ["Labor", "Labor = RequiredArea × (BaseRate + Adders)", money(laborLine)],
+          ["Fixed Fees", "FixedFees", money(fixedFees)],
+          ["Tax", "Tax = Subtotal × TaxRate", money(tax)],
+          ["Total", "Total = Materials + Labor + FixedFees + Tax", money(total)]
+        ];
+        for (const r of rows){
+          const tr = document.createElement("tr");
+          const td1 = document.createElement("td"); td1.textContent = r[0];
+          const td2 = document.createElement("td"); td2.innerHTML = "<code>" + escapeHtml(r[1]) + "</code>";
+          const td3 = document.createElement("td"); td3.textContent = r[2];
+          tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+          breakdownBody.appendChild(tr);
+        }
+
+        if (tileMode.checked){
+          const tileL = Math.max(0.01, parseNum($("tileL").value, 0));
+          const tileW = Math.max(0.01, parseNum($("tileW").value, 0));
+          const tilePrice = Math.max(0, parseNum($("tilePrice").value, 0));
+
+          const jointWidth = Math.max(0, parseNum($("jointWidth").value, 0));
+          const jointDepth = Math.max(0, parseNum($("jointDepth").value, 0));
+          const groutDensity = Math.max(1, parseNum($("groutDensity").value, 100));
+
+          const thinsetCoverage = Math.max(1, parseNum($("thinsetCoverage").value, 50));
+          const thinsetOver = Math.max(0, parseNum($("thinsetOverbuild").value, 0));
+          const groutOver = Math.max(0, parseNum($("groutOverbuild").value, 0));
+
+          const inchesPerFoot = 12;
+
+          // Tile area depends on unit system
+          // If units are meters, convert req (sq m) to sq ft for tile math since tile inputs are inches
+          const reqSqFt = (units.value === "m") ? (req * 10.7639104167097) : req;
+
+          const TLft = tileL / inchesPerFoot;
+          const TWft = tileW / inchesPerFoot;
+          const tileAreaSqFt = TLft * TWft;
+
+          const tileCount = Math.ceil(reqSqFt / tileAreaSqFt);
+
+          const tileCost = tileCount * tilePrice;
+
+          // Grout volume approach (cubic inches), then to cubic feet, then lbs via density
+          // GroutVolumePerTile(in^3) = (L + W) * JointWidth * JointDepth
+          // TotalGroutVolume(in^3) = tileCount * GroutVolumePerTile
+          // TotalGroutVolume(ft^3) = in^3 / 1728
+          // GroutWeight(lb) = ft^3 * Density(lb/ft^3)
+          const groutVolPerTileIn3 = (tileL + tileW) * jointWidth * jointDepth;
+          const groutTotalIn3 = tileCount * groutVolPerTileIn3;
+          const groutTotalFt3 = groutTotalIn3 / 1728;
+          const groutLbBase = groutTotalFt3 * groutDensity;
+          const groutLb = groutLbBase * (1 + groutOver/100);
+
+          // Thinset bags
+          const thinsetBags = Math.ceil((reqSqFt / thinsetCoverage) * (1 + thinsetOver/100));
+
+          tileBody.innerHTML = "";
+          const tileRows = [
+            ["Tile count", "TileCount = ceil(RequiredArea / TileArea)", tileCount.toLocaleString() + " tiles"],
+            ["Tile material cost", "TileCost = TileCount × PricePerTile", money(tileCost)],
+            ["Grout (weight)", "GroutWeight = (TileCount × (L+W) × Jw × Jd / 1728) × Density × (1 + Overbuild)", fmt(groutLb, 1) + " lb"],
+            ["Thinset (bags)", "ThinsetBags = ceil(RequiredArea / CoveragePerBag × (1 + Overbuild))", thinsetBags.toLocaleString() + " bags"]
+          ];
+          for (const r of tileRows){
+            const tr = document.createElement("tr");
+            const td1 = document.createElement("td"); td1.textContent = r[0];
+            const td2 = document.createElement("td"); td2.innerHTML = "<code>" + escapeHtml(r[1]) + "</code>";
+            const td3 = document.createElement("td"); td3.textContent = r[2];
+            tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+            tileBody.appendChild(tr);
+          }
+
+          tileResults.style.display = "";
+        } else {
+          tileResults.style.display = "none";
+        }
+
+        unitNote.textContent =
+          "Units note: Area outputs are in " + unitLabel() +
+          ". Tile mode uses tile dimensions in inches and internally converts required area to sq ft for tile, grout, and thinset calculations.";
+
+        results.style.display = "";
+      }
+
+      function escapeHtml(s){
+        return String(s)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function resetDefaults(){
+        units.value = "ft";
+        mode.value = "rect";
+        setModeUI();
+
+        $("waste").value = 10;
+        $("materialCost").value = 3.75;
+        $("laborRate").value = 2.25;
+        $("fixedFees").value = 250;
+        $("laborAdders").value = 0.35;
+        $("taxRate").value = 0;
+
+        tileMode.checked = false;
+        setTileUI();
+
+        $("tileL").value = 24;
+        $("tileW").value = 12;
+        $("tilePrice").value = 2.10;
+        $("jointWidth").value = 0.125;
+        $("jointDepth").value = 0.25;
+        $("groutDensity").value = 100;
+        $("thinsetCoverage").value = 50;
+        $("thinsetOverbuild").value = 10;
+        $("groutOverbuild").value = 8;
+
+        $("polyPoints").value = "0,0\n18,0\n18,12\n0,12";
+
+        clearRects();
+        results.style.display = "none";
+      }
+
+      // Wire up events
+      mode.addEventListener("change", setModeUI);
+      tileMode.addEventListener("change", setTileUI);
+
+      addRectBtn.addEventListener("click", () => addRectRow(10, 10));
+      clearRectsBtn.addEventListener("click", clearRects);
+
+      calcBtn.addEventListener("click", calc);
+      resetBtn.addEventListener("click", resetDefaults);
+
+      // Init
+      clearRects();
+      setModeUI();
+      setTileUI();
+    })();
+  </script>
+</body>
+</html>
